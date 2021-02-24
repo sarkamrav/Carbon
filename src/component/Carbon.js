@@ -112,7 +112,7 @@ const InputWrapper = styled.td`
             getTableContainerProps, }) => (
               <TableContainer
               title="DataTable"
-              description="With batch actions"
+              description=""
               {...getTableContainerProps()}>
               <TableToolbar {...getToolbarProps()}>
                 <TableBatchActions {...getBatchActionProps()}>
