@@ -32,6 +32,15 @@ const InputWrapper = styled.td`
 }
 
 `
+/* deleting from api */
+const deleteApiData = (rowdata)=>{
+  fetch('https://jsonplaceholder.typicode.com/comments/' + `${rowdata[0].postId}` , {
+    method: 'DELETE',
+  })
+  .then(res => res.json())
+  .then(res => console.log(res))
+ }
+
   const Carbon = () =>{
    const [rowdata,updatedRowData] =useState([]);
 
@@ -67,12 +76,19 @@ const InputWrapper = styled.td`
      .then(json => updatedRowData(json))
    }, [])
 
+  
    /* row deletion */
    useEffect(() => {
-       console.log(dataid.length)
+     /* local data deletion */
+       console.log("dataid.length",dataid.length)
+       console.log("zzzzzzzzzz",rowdata)
       const fv =  dataid.length>0 && rowdata.filter(data=>!dataid.includes(data.id))
       console.log('fv', fv)
       dataid.length && updatedRowData(fv)
+
+      /* triggring api delete dummy api */
+      dataid.length && deleteApiData(rowdata);
+    
    }, [dataid])
 
 
@@ -81,17 +97,6 @@ const InputWrapper = styled.td`
         const dataId =  selecteddata.map(data =>data.id)
         updatedid(dataId);
     }
-  /* enabling editing */
-      const batchActionClick1=(selecteddata)=>{
-        updateedit(true);
-      console.log("selecteddata",selecteddata)
-    }
-
-  /* disabling editing */
-    const savedata=(selecteddata)=>{
-      updateedit(false);
-    console.log("edit",edit)
-  }
 
   const setRowData =(a)=>{
     console.log('hhh',a)
@@ -124,21 +129,8 @@ const InputWrapper = styled.td`
                   </TableBatchAction>
                   <TableBatchAction
                     tabIndex={getBatchActionProps().shouldShowBatchActions ? 0 : -1}
-                    renderIcon={Save}
-                    onClick={()=>batchActionClick1(selectedRows)}>
-                   
-                    Edit
-                  </TableBatchAction>
-                  <TableBatchAction
-                    tabIndex={getBatchActionProps().shouldShowBatchActions ? 0 : -1}
-                    renderIcon={Save}
-                    onClick={()=>savedata(selectedRows)}>
-                    Save
-                  </TableBatchAction>
-                  <TableBatchAction
-                    tabIndex={getBatchActionProps().shouldShowBatchActions ? 0 : -1}
                     renderIcon={Download}
-                    onClick={()=>savedata(selectedRows)}>
+                   >
                     
                     Download
                   </TableBatchAction>
@@ -179,10 +171,8 @@ const InputWrapper = styled.td`
                     <TableRow key={i} {...getRowProps({ row })}>
                       <TableSelectRow {...getSelectionProps({ row , onClick: () => setRowData(row),})} />
                       {console.log("row.cells",row.cells)}
-                      {row.cells.map((cell) =>  row.isSelected == false ? (
-                        <TableCell  editable ="true" key={cell.id}>{cell.value}</TableCell>) :
-                    edit == true ? <InputWrapper><input type ='text' name ={cell.value} onChange = {(e,name)=>nameChangehandler(e,cell.value)} value ={cell.value} /></InputWrapper>
-                    :  <TableCell  editable ="true" key={cell.id}>{cell.value}</TableCell>  
+                      {row.cells.map((cell) => 
+                        <TableCell  editable ="true" key={cell.id}>{cell.value}</TableCell>
                       )}
                     </TableRow>
                   ))}
