@@ -43,7 +43,6 @@ const deleteApiData = (rowdata)=>{
 
   const Carbon = () =>{
    const [rowdata,updatedRowData] =useState([]);
-
    /* table headers*/
    const [headerData]=useState([
     {
