@@ -2,8 +2,6 @@ import { createStore, applyMiddleware } from 'redux'
 import createSagaMiddleware from 'redux-saga'
  import {rootSaga} from '../saga'
 import logger from 'redux-logger'
-// we need an initialState otherwise , store will freak out
-
 
 const sagaMiddleware = createSagaMiddleware()
 

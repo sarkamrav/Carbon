@@ -24,7 +24,6 @@
     TableToolbarContent,
     TableToolbarSearch,
     TableToolbarMenu, } from 'carbon-components-react';
-  import { headerData } from './sampleData';
 import styled from 'styled-components'
 
 const InputWrapper = styled.td`
@@ -35,15 +34,40 @@ const InputWrapper = styled.td`
 `
   const Carbon = () =>{
    const [rowdata,updatedRowData] =useState([]);
+
+   /* table headers*/
+   const [headerData]=useState([
+    {
+      key: 'name',
+      header: 'Name',
+    },
+    {
+      key: 'email',
+      header: 'Email',
+    },
+    {
+      key: 'body',
+      header: 'Description',
+    },
+  ])
+
    const [dataid,updatedid] =useState([]);
    const [edit,updateedit] =useState(false);
    const [name,updatedname] =useState([]);
-// const [rowData,updatedRowData]=useState([])
-console.log("updatedRowData",rowdata)
+   console.log("updatedRowData",rowdata)
    const nameChangehandler =(e,name)=>{
     updatedname(e.target.value)
     console.log(name)
    }
+
+  /* fetching table data from api */
+   useEffect(() => {
+     fetch('https://jsonplaceholder.typicode.com/comments?postId=1')
+     .then(response => response.json())
+     .then(json => updatedRowData(json))
+   }, [])
+
+   /* row deletion */
    useEffect(() => {
        console.log(dataid.length)
       const fv =  dataid.length>0 && rowdata.filter(data=>!dataid.includes(data.id))
@@ -51,26 +75,27 @@ console.log("updatedRowData",rowdata)
       dataid.length && updatedRowData(fv)
    }, [dataid])
 
-   useEffect(() => {
-    fetch('https://jsonplaceholder.typicode.com/comments?postId=1')
-    .then(response => response.json())
-    .then(json => updatedRowData(json))
-}, [])
 
+   /* fetching id of selected rows*/
     const batchActionClick=(selecteddata)=>{
-
         const dataId =  selecteddata.map(data =>data.id)
         updatedid(dataId);
     }
+  /* enabling editing */
+      const batchActionClick1=(selecteddata)=>{
+        updateedit(true);
+      console.log("selecteddata",selecteddata)
+    }
 
-    const batchActionClick1=(selecteddata)=>{
-      updateedit(true);
-    console.log("selecteddata",selecteddata)
+  /* disabling editing */
+    const savedata=(selecteddata)=>{
+      updateedit(false);
+    console.log("edit",edit)
   }
-  const savedata=(selecteddata)=>{
-    updateedit(false);
-  console.log("edit",edit)
-}
+
+  const setRowData =(a)=>{
+    console.log('hhh',a)
+  }
       return (
       
         <DataTable rows={rowdata} headers={headerData}>
@@ -152,7 +177,7 @@ console.log("updatedRowData",rowdata)
                 <TableBody>
                   {rows.map((row, i) => (
                     <TableRow key={i} {...getRowProps({ row })}>
-                      <TableSelectRow {...getSelectionProps({ row })} />
+                      <TableSelectRow {...getSelectionProps({ row , onClick: () => setRowData(row),})} />
                       {console.log("row.cells",row.cells)}
                       {row.cells.map((cell) =>  row.isSelected == false ? (
                         <TableCell  editable ="true" key={cell.id}>{cell.value}</TableCell>) :
